@@ -244,6 +244,73 @@ begin
 	end;
 end;
 
+procedure DLL_Delete(var List: TDLL; ElemNum: longint);
+var
+	Elem, Del: TDLL;
+	i: longint;
+begin
+	Del := nil;
+	if (List <> nil) then
+	begin
+		if (List^.Prev = nil) then
+		begin
+			if (ElemNum = 1) then
+			begin
+				Del := List;
+				List := List^.Next;
+				if (List <> nil) then
+					List^.Prev := nil;
+			end
+			else
+			begin
+				Elem := List;
+				for i := 2 to ElemNum do
+				begin
+					if (Elem = nil) then
+						break;
+					Elem := Elem^.Next;
+				end;
+				if (Elem <> nil) then
+				begin
+					Elem^.Prev^.Next := Elem^.Next;
+					if (Elem^.Next <> nil) then
+						Elem^.Next^.Prev := Elem^.Prev;
+					Del := Elem;
+				end;
+			end;
+		end
+		else
+			if (List^.Next = nil) then
+			begin
+				if (ElemNum = 1) then
+				begin
+					Del := List;
+					List := List^.Prev;
+					if (List <> nil) then
+						List^.Next := nil;
+				end
+				else
+				begin
+					Elem := List;
+					for i := 2 to ElemNum do
+					begin
+						if (Elem = nil) then
+						Elem := Elem^.Prev;
+					end;
+					if (Elem <> nil) then
+					begin
+						if (Elem^.Prev <> nil) then
+							Elem^.Prev^.Next := Elem^.Next;
+						Elem^.Next^.Prev := Elem^.Prev;
+						Del := Elem;
+					end;
+				end;
+			end; 
+	end;
+	if (Del <> nil) then
+		dispose(Del);
+end;
+
 var
 	List, ListEnd: TDLL;
 
